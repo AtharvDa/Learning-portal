@@ -65,12 +65,12 @@ public class CourseService {
 	 * @param courseDto
 	 * @return
 	 */
-	public CourseDto createCourse(CourseDto courseDto) {
-		Course course = CourseMapper.INSTANCE.courseDtoToCourse(courseDto);
+	public Course createCourse(Course course) {
+
 		logger.info("Course " + course);
 		Course savedCourse = courseRepository.save(course);
 
-		return CourseMapper.INSTANCE.courseToCourseDto(savedCourse);
+		return savedCourse;
 	}
 
 	/**

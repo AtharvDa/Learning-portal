@@ -1,7 +1,6 @@
 package com.effigo.learningportalv2.controller;
 
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.effigo.learningportalv2.dto.CategoryDto;
 import com.effigo.learningportalv2.dto.CourseDto;
 import com.effigo.learningportalv2.dto.UserDto;
 import com.effigo.learningportalv2.entity.Category;
 import com.effigo.learningportalv2.entity.Course;
+import com.effigo.learningportalv2.entity.User;
 import com.effigo.learningportalv2.enums.UserRole;
 import com.effigo.learningportalv2.mapper.CategoryMapper;
 import com.effigo.learningportalv2.mapper.CourseMapper;
+import com.effigo.learningportalv2.mapper.UserMapper;
 import com.effigo.learningportalv2.service.CategoryService;
 import com.effigo.learningportalv2.service.CourseService;
 import com.effigo.learningportalv2.service.UserService;
@@ -76,8 +76,8 @@ public class CourseController {
 			if (isUserAuthor(authorId)) {
 				// Fetch the category by ID
 				logger.info("Fetching category by ID: {}", categoryId);
-				CategoryDto categoryDto = categoryService.getCategoryById(categoryId);
-				Category category = CategoryMapper.INSTANCE.categoryDtoToCategory(categoryDto);
+				Category category = CategoryMapper.INSTANCE
+						.categoryDtoToCategory(categoryService.getCategoryById(categoryId));
 				if (category == null) {
 					logger.error("Invalid category ID: {}", categoryId);
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid category ID");
@@ -86,21 +86,20 @@ public class CourseController {
 				Course course = CourseMapper.INSTANCE.courseDtoToCourse(courseDto);
 				logger.info("course required : {}", course);
 
-				Set<Course> courses = category.getCourses();
-				courses.add(course);
-				category.setCourses(courses);
+//				Set<Course> courses = category.getCourses();
+//				courses.add(course);
+//				category.setCourses(courses);
 
-				UserDto author = userService.getUserById(authorId);
-				courseDto.setCategory(categoryDto);
-				courseDto.setAuthor(author);
+				User author = UserMapper.INSTANCE.userDtoToUser(userService.getUserById(authorId));
+				logger.info("Author required : {}", author);
+				course.setAuthor(author);
+				course.setCategory(category);
+				logger.info("course required : {}", course);
 
-				logger.info("category required : {}", courses);
-				logger.info("Creating course: {}", courseDto);
+				Course createdCourse = courseService.createCourse(course);
+				CourseDto createdCourseDto = CourseMapper.INSTANCE.courseToCourseDto(createdCourse);
 
-				// Create the course
-				CourseDto createdCourse = courseService.createCourse(courseDto);
-				logger.info("Course created: {}", createdCourse);
-				return ResponseEntity.status(HttpStatus.CREATED).body(createdCourse);
+				return ResponseEntity.status(HttpStatus.CREATED).body(createdCourseDto);
 			} else {
 				logger.warn("Unauthorized access to create course by user ID: {}", authorId);
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

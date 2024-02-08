@@ -86,8 +86,8 @@ public class UserController {
 	 * @param userDto
 	 * @return
 	 */
-	@PostMapping("/admin/{adminId}")
-	public ResponseEntity<Object> createUser(@PathVariable Long adminId, @RequestBody UserDto userDto) {
+	@PostMapping("/admin")
+	public ResponseEntity<Object> createUser(@RequestParam Long adminId, @RequestBody UserDto userDto) {
 
 		if (isUserAdmin(adminId)) {
 			logger.info("Request create a new user");

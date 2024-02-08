@@ -19,7 +19,8 @@ Learning Portal v2 is a web application backend that provides RESTful APIs for m
 - **Others**: Maven, Git
 
 ## API Endpoints
-
+Visit below link for all api endpoints :
+https://documenter.getpostman.com/view/27266297/2s9Yyy9yX9
 
 
 ## Getting Started
